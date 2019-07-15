@@ -39,6 +39,17 @@ app.get('/users/:userId/rooms', (req, res) => {
   });
 });
 
+app.get('/users/:userId/rooms/:roomId/markers', (req, res) => {
+  const userId = req.params.userId;
+  const roomId = req.params.roomId;
+  const sql = `SELECT latitude, longitude, markerMetadata FROM Locations WHERE userId = ${userId} and roomId = ${roomId}`;
+  
+  connection.query(sql, (err, results, fields) => {
+    if (err) throw err;
+    res.send(results);
+  });
+});
+
 app.post('/users/:userId/rooms/:roomId/marker', (req, res) => {
   const userId = req.params.userId;
   const roomId = req.params.roomId;
