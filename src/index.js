@@ -47,8 +47,7 @@ app.post('/users/:userId/rooms/:roomId/marker', (req, res) => {
   const latitude = body.latitude;
   const markerMetadata = body.markerMetadata;
 
-  console.log(req.body.longitude);
-  const sql = `INSERT INTO Locations (userId, longitude, latitude, markerMetadata, roomId) VALUES (${userId}, ${longitude}, ${latitude}, ${markerMetadata}, ${roomId})`;
+  const sql = `INSERT INTO Locations (userId, longitude, latitude, markerMetadata, roomId) VALUES (${userId}, ${longitude}, ${latitude}, '${markerMetadata}', ${roomId})`;
   connection.query(sql, (err, results, fields) => {
     if (err) throw err;
     res.status(201).end();
