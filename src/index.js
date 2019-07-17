@@ -42,7 +42,7 @@ app.get('/users/:userId/rooms', (req, res) => {
 app.get('/users/:userId/rooms/:roomId/markers', (req, res) => {
   const userId = req.params.userId;
   const roomId = req.params.roomId;
-  const sql = `SELECT latitude, longitude, markerMetadata FROM Locations WHERE userId = ${userId} and roomId = ${roomId}`;
+  const sql = `SELECT latitude, longitude, altitude, markerMetadata FROM Locations WHERE userId = ${userId} and roomId = ${roomId}`;
   
   connection.query(sql, (err, results, fields) => {
     if (err) throw err;
@@ -56,9 +56,10 @@ app.post('/users/:userId/rooms/:roomId/marker', (req, res) => {
   const body = req.body;
   const longitude = body.longitude;
   const latitude = body.latitude;
+  const altitude = body.altitude;
   const markerMetadata = body.markerMetadata;
 
-  const sql = `INSERT INTO Locations (userId, longitude, latitude, markerMetadata, roomId) VALUES (${userId}, ${longitude}, ${latitude}, '${markerMetadata}', ${roomId})`;
+  const sql = `INSERT INTO Locations (userId, longitude, latitude, altitude, markerMetadata, roomId) VALUES (${userId}, ${longitude}, ${latitude}, ${altitude}, '${markerMetadata}', ${roomId})`;
   connection.query(sql, (err, results, fields) => {
     if (err) throw err;
     res.status(201).end();

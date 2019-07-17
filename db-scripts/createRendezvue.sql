@@ -12,6 +12,7 @@ CREATE TABLE `Locations` (
 	`userId` int(32) NOT NULL,
 	`longitude` FLOAT(32) NOT NULL,
 	`latitude` FLOAT(32) NOT NULL,
+	`altitude` FLOAT(32) NOT NULL,	
 	`markerMetadata` varchar(255) NOT NULL,
 	`roomId` int(32) NOT NULL,
 	PRIMARY KEY (`locationId`)
