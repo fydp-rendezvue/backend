@@ -46,7 +46,13 @@ app.get('/users/:userId/rooms/:roomId/markers', (req, res) => {
   
   connection.query(sql, (err, results, fields) => {
     if (err) throw err;
-    res.send(results);
+    let mappedResults = {};
+    let key = 'results';
+    mappedResults[key] = [];
+    for (let result of results) {
+      mappedResults[key].push(result);
+    }
+    res.send(mappedResults);
   });
 });
 
