@@ -27,15 +27,12 @@ app.get('/', (req, res) => {
 
 app.get('/users/:userId/rooms', (req, res) => {
   const userId = req.params.userId;
-  const sql = `SELECT roomId FROM Rooms WHERE userId = ${userId}`;
+  const sql = `SELECT Rooms.roomId, roomName FROM Rooms INNER JOIN UserRoom USING(roomId) WHERE userId = ${userId}`;
   
   connection.query(sql, (err, results, fields) => {
     if (err) throw err;
-    let roomIds = [];
-    for (let roomIdPair of results) {
-      roomIds.push(Object.values(roomIdPair)[0]);
-    }
-    res.send(roomIds);
+
+    res.send(results);
   });
 });
 
