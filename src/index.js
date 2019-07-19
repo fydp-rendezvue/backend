@@ -46,10 +46,27 @@ app.get('/users/:userId/rooms', (req, res) => {
   });
 });
 
+// app.post('/users/:userId/rooms', (req, res) => {
+//   const userId = req.params.userId;
+//   const body = req.body;
+//   const roomId = body.roomId;
+//   const roomName = body.roomName;
+//   const sql = 
+//     `START TRANSACTION;
+//     INSERT INTO Rooms (roomId, roomName) VALUES (${roomId}, ${roomName});
+//     INSERT INTO UserRoom (roomId, userId) VALUES (${roomId}, ${userId});
+//     COMMIT;`;
+//   connection.query(sql, (err, results, fields) => {
+//     if (err) throw err;
+
+//     res.send(results);
+//   });
+// });
+
 app.get('/users/:userId/rooms/:roomId/markers', (req, res) => {
   const userId = req.params.userId;
   const roomId = req.params.roomId;
-  const sql = `SELECT latitude, longitude, altitude, markerMetadata FROM Locations WHERE userId = ${userId} and roomId = ${roomId}`;
+  const sql = `SELECT locationId, latitude, longitude, altitude, markerMetadata FROM Locations WHERE userId = ${userId} and roomId = ${roomId}`;
   
   connection.query(sql, (err, results, fields) => {
     if (err) throw err;
