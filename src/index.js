@@ -46,22 +46,71 @@ app.get('/users/:userId/rooms', (req, res) => {
   });
 });
 
-// app.post('/users/:userId/rooms', (req, res) => {
-//   const userId = req.params.userId;
-//   const body = req.body;
-//   const roomId = body.roomId;
-//   const roomName = body.roomName;
-//   const sql = 
-//     `START TRANSACTION;
-//     INSERT INTO Rooms (roomId, roomName) VALUES (${roomId}, ${roomName});
-//     INSERT INTO UserRoom (roomId, userId) VALUES (${roomId}, ${userId});
-//     COMMIT;`;
-//   connection.query(sql, (err, results, fields) => {
-//     if (err) throw err;
+app.post('/users/:userId/rooms', (req, res) => {
+  const userId = req.params.userId;
+  const body = req.body;
+  const roomId = body.roomId;
+  const roomName = body.roomName;
 
-//     res.send(results);
-//   });
-// });
+  connection.beginTransaction(function(err) {
+    if (err) { throw err; }
+    connection.query(`INSERT INTO Rooms (roomId, roomName) VALUES (${roomId}, '${roomName}')`, function(err, result) {
+      if (err) { 
+        connection.rollback(function() {
+          throw err;
+        });
+      }
+      connection.query(`INSERT INTO UserRoom (roomId, userId) VALUES (${roomId}, ${userId})`, function(err, result) {
+        if (err) { 
+          connection.rollback(function() {
+            throw err;
+          });
+        }  
+        connection.commit(function(err) {
+          if (err) { 
+            connection.rollback(function() {
+              throw err;
+            });
+          }
+          console.log('Success! Room created!');
+          res.status(201).end();
+        });
+      });
+    });
+  });
+});
+
+app.delete('/users/:userId/rooms/:roomId', (req, res) => {
+  const userId = req.params.userId;
+  const roomId = req.params.roomId;
+
+  connection.beginTransaction(function(err) {
+    if (err) { throw err; }
+    connection.query(`DELETE FROM UserRoom WHERE roomId = ${roomId} and userId = ${userId}`, function(err, result) {
+      if (err) { 
+        connection.rollback(function() {
+          throw err;
+        });
+      }
+      connection.query(`DELETE FROM Rooms WHERE roomId = ${roomId}`, function(err, result) {
+        if (err) { 
+          connection.rollback(function() {
+            throw err;
+          });
+        }  
+        connection.commit(function(err) {
+          if (err) { 
+            connection.rollback(function() {
+              throw err;
+            });
+          }
+          console.log('Success! Room deleted!');
+          res.status(200).end();
+        });
+      });
+    });
+  });
+});
 
 app.get('/users/:userId/rooms/:roomId/markers', (req, res) => {
   const userId = req.params.userId;
