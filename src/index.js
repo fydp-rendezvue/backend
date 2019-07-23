@@ -37,7 +37,7 @@ app.get('/users', (req, res) => {
 
 app.get('/users/:userId/rooms/:roomId/usersInRoom', (req, res) => {
   const roomId = req.params.roomId;
-  const sql = `SELECT userId FROM UserRoom WHERE roomId = ${roomId}`
+  const sql = `SELECT UserRoom.userId, username, firstName, lastName FROM UserRoom INNER JOIN Users WHERE roomId = ${roomId}`
 
   connection.query(sql, (err, results, fields) => {
     if (err) throw err;
@@ -60,17 +60,17 @@ app.get('/users/:userId/rooms', (req, res) => {
 app.post('/users/:userId/rooms', (req, res) => {
   const userId = req.params.userId;
   const body = req.body;
-  const roomId = body.roomId;
   const roomName = body.roomName;
 
   connection.beginTransaction(function(err) {
     if (err) { throw err; }
-    connection.query(`INSERT INTO Rooms (roomId, roomName) VALUES (${roomId}, '${roomName}')`, function(err, result) {
+    connection.query(`INSERT INTO Rooms (roomName) VALUES ('${roomName}')`, function(err, result) {
       if (err) { 
         connection.rollback(function() {
           throw err;
         });
       }
+      const roomId = result.insertId;
       connection.query(`INSERT INTO UserRoom (roomId, userId) VALUES (${roomId}, ${userId})`, function(err, result) {
         if (err) { 
           connection.rollback(function() {
