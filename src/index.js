@@ -35,6 +35,17 @@ app.get('/users', (req, res) => {
   });
 });
 
+app.get('/users/:userId/rooms/:roomId/usersInRoom', (req, res) => {
+  const roomId = req.params.roomId;
+  const sql = `SELECT userId FROM UserRoom WHERE roomId = ${roomId}`
+
+  connection.query(sql, (err, results, fields) => {
+    if (err) throw err;
+
+    res.send(results);
+  });
+});
+
 app.get('/users/:userId/rooms', (req, res) => {
   const userId = req.params.userId;
   const sql = `SELECT roomId, roomName FROM Rooms INNER JOIN UserRoom USING(roomId) WHERE userId = ${userId}`;
