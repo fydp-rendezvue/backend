@@ -36,8 +36,9 @@ app.get('/users', (req, res) => {
 });
 
 app.get('/users/:userId/rooms/:roomId/usersInRoom', (req, res) => {
+  const userId = req.params.userId;
   const roomId = req.params.roomId;
-  const sql = `SELECT UserRoom.userId, username, firstName, lastName FROM UserRoom INNER JOIN Users WHERE roomId = ${roomId}`
+  const sql = `SELECT DISTINCT Users.userId, username, firstName, lastName, roomId FROM UserRoom INNER JOIN Users ON (UserRoom.userId = Users.userId) WHERE roomId = ${roomId} and Users.userId != ${userId}`;
 
   connection.query(sql, (err, results, fields) => {
     if (err) throw err;
