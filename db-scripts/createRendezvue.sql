@@ -41,7 +41,7 @@ CREATE TABLE `Rooms` (
 
 ALTER TABLE `Locations` ADD CONSTRAINT `Locations_fk0` FOREIGN KEY (`userId`) REFERENCES `Users`(`userId`);
 
-ALTER TABLE `Locations` ADD CONSTRAINT `Locations_fk1` FOREIGN KEY (`roomId`) REFERENCES `UserRoom`(`roomId`);
+ALTER TABLE `Locations` ADD CONSTRAINT `Locations_fk1` FOREIGN KEY (`roomId`) REFERENCES `Rooms`(`roomId`);
 
 ALTER TABLE `UserRoom` ADD CONSTRAINT `UserRoom_fk0` FOREIGN KEY (`roomId`) REFERENCES `Rooms`(`roomId`);
 

@@ -150,10 +150,24 @@ app.post('/users/:userId/rooms/:roomId/marker', (req, res) => {
   const altitude = body.altitude;
   const markerMetadata = body.markerMetadata;
 
-  const sql = `INSERT INTO Locations (userId, longitude, latitude, altitude, markerMetadata, roomId) VALUES (${userId}, ${longitude}, ${latitude}, ${altitude}, '${markerMetadata}', ${roomId})`;
-  connection.query(sql, (err, results, fields) => {
+  const locationSql = `SELECT locationId FROM Locations WHERE userId = ${userId} and roomId = ${roomId}`;
+  connection.query(locationSql, (err, results, fields) => {
     if (err) throw err;
-    res.status(201).end();
+
+    var sql = ``;
+    if (results === undefined  || results.length == 0) {
+      sql = `INSERT INTO Locations (userId, longitude, latitude, altitude, markerMetadata, roomId) 
+            VALUES (${userId}, ${longitude}, ${latitude}, ${altitude}, '${markerMetadata}', ${roomId})`;
+    } else {
+      const locationId = results[0].locationId;
+      sql = `INSERT INTO Locations (locationId, userId, longitude, latitude, altitude, markerMetadata, roomId) 
+            VALUES (${locationId}, ${userId}, ${longitude}, ${latitude}, ${altitude}, '${markerMetadata}', ${roomId}) 
+            ON DUPLICATE KEY UPDATE longitude = ${longitude}, latitude = ${latitude}, altitude = ${altitude}, markerMetadata = '${markerMetadata}'`;
+    }
+    connection.query(sql, (err, results, fields) => {
+      if (err) throw err;
+      res.status(201).end();
+    });
   });
 })
 
