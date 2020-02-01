@@ -35,6 +35,22 @@ app.get('/users', (req, res) => {
   });
 });
 
+app.post('/users', (req, res) => {
+  const body = req.body;
+  console.log(req.body);
+  const newUsername = body.username;
+  const newUserPwd = body.userPassword;
+  const firstName = body.firstName;
+  const lastName = body.lastName;
+  const sql = `INSERT INTO Users (username, password,firstName, lastName) VALUES ('${newUsername}', '${newUserPwd}', '${firstName}', '${lastName}')`;
+  
+  connection.query(sql, (err, results, fields) => {
+    if (err) throw err;
+    console.log("Success, User Created!");
+    res.status(201).end();
+  });
+});
+
 app.get('/users/:userId/rooms/:roomId/usersInRoom', (req, res) => {
   const userId = req.params.userId;
   const roomId = req.params.roomId;
