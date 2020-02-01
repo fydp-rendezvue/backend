@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 
 // Get list of users
 app.get('/users', (req, res) => {
-  const sql = `SELECT userId, username, firstName, lastName FROM Users`
+  const sql = `SELECT userId, username, firstName, lastName FROM Users`;
 
   connection.query(sql, (err, results, fields) => {
     if (err) throw err;
@@ -53,6 +53,31 @@ app.post('/users', (req, res) => {
     res.status(201).end();
   });
 });
+
+// Authenticate a user
+app.get('/login', (req, res) => {
+  const body = req.body;
+  const username = body.username;
+  const userpwd = body.userPwd;
+  const sql = `SELECT password FROM Users WHERE username = '${username}'`;
+
+  connection.query(sql, (err, results, fields) => {
+    if (err) throw err;
+
+    if (results.length == 0) { 
+      res.status(400).send("User does not exist, please create an account!");
+    } else {
+      const actualPwd = results[0].password;
+      console.log(userpwd);
+      console.log(actualPwd);
+      if (actualPwd == userpwd) {
+        res.status(202).end();
+      } else {
+        res.status(401).send("Wrong password!");
+      }
+    }
+  });
+})
 
 // Get all users within a room
 app.get('/users/:userId/rooms/:roomId/usersInRoom', (req, res) => {
