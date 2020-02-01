@@ -6,7 +6,7 @@ const app = express();
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'fydp',
-  password: 'password',
+  password: '',
   database: 'rendezvue'
 });
 
@@ -45,7 +45,7 @@ app.post('/users', (req, res) => {
   const newUserPwd = body.userPassword;
   const firstName = body.firstName;
   const lastName = body.lastName;
-  const sql = `INSERT INTO Users (username, password,firstName, lastName) VALUES ('${newUsername}', '${newUserPwd}', '${firstName}', '${lastName}')`;
+  const sql = `INSERT INTO Users (username, password, firstName, lastName) VALUES ('${newUsername}', '${newUserPwd}', '${firstName}', '${lastName}')`;
   
   connection.query(sql, (err, results, fields) => {
     if (err) throw err;
@@ -165,7 +165,7 @@ app.get('/users/:userId/rooms/:roomId/markers', (req, res) => {
   });
 });
 
-// Create a marker
+// Create a marker / replace marker if already exists
 app.post('/users/:userId/rooms/:roomId/marker', (req, res) => {
   const userId = req.params.userId;
   const roomId = req.params.roomId;
@@ -194,6 +194,18 @@ app.post('/users/:userId/rooms/:roomId/marker', (req, res) => {
       res.status(201).end();
     });
   });
+})
+
+// Delete a marker
+app.delete('/users/:userId/rooms/:roomId/marker', (req, res) => {
+  const userId = req.params.userId;
+  const roomId = req.params.roomId;
+  const sql = `DELETE FROM Locations WHERE userId = ${userId} and roomId = ${roomId}`;
+  connection.query(sql, (err, results, fields) => {
+      if (err) throw err;
+      console.log(`Marker for user ${userId} in room ${roomId} deleted!`);
+      res.status(201).end();
+    });
 })
 
 app.listen(8000, () => {
