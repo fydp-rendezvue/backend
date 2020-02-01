@@ -6,7 +6,7 @@ const app = express();
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'fydp',
-  password: '',
+  password: 'password',
   database: 'rendezvue'
 });
 
