@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 
 // Get list of users
 app.get('/users', (req, res) => {
-  const sql = `SELECT userId, username, firstName, lastName FROM Users`;
+  const sql = `SELECT userId, username FROM Users`;
 
   connection.query(sql, (err, results, fields) => {
     if (err) throw err;
@@ -40,17 +40,23 @@ app.get('/users', (req, res) => {
 // Create a user
 app.post('/users', (req, res) => {
   const body = req.body;
-  console.log(req.body);
   const newUsername = body.username;
   const newUserPwd = body.userPassword;
-  const firstName = body.firstName;
-  const lastName = body.lastName;
-  const sql = `INSERT INTO Users (username, password, firstName, lastName) VALUES ('${newUsername}', '${newUserPwd}', '${firstName}', '${lastName}')`;
+  const existsSql = `SELECT username FROM Users WHERE username = '${newUsername}'`;
+  const sql = `INSERT INTO Users (username, password, firstName, lastName) VALUES ('${newUsername}', '${newUserPwd}', 'FirstName', 'LastName')`;
   
-  connection.query(sql, (err, results, fields) => {
+  connection.query(existsSql,(err, results, fields) => {
     if (err) throw err;
-    console.log("Success, User Created!");
-    res.status(201).end();
+
+    if (results.length == 0) {
+      connection.query(sql, (err, results, fields) => {
+        if (err) throw err;
+        console.log("Success, User Created!");
+        res.status(201).end();
+      });
+    } else {
+      res.status(409).end();
+    }
   });
 });
 
@@ -83,7 +89,7 @@ app.get('/login', (req, res) => {
 app.get('/users/:userId/rooms/:roomId/usersInRoom', (req, res) => {
   const userId = req.params.userId;
   const roomId = req.params.roomId;
-  const sql = `SELECT DISTINCT Users.userId, username, firstName, lastName, roomId FROM UserRoom INNER JOIN Users ON (UserRoom.userId = Users.userId) WHERE roomId = ${roomId} and Users.userId != ${userId}`;
+  const sql = `SELECT DISTINCT Users.userId, username, roomId FROM UserRoom INNER JOIN Users ON (UserRoom.userId = Users.userId) WHERE roomId = ${roomId} and Users.userId != ${userId}`;
 
   connection.query(sql, (err, results, fields) => {
     if (err) throw err;
