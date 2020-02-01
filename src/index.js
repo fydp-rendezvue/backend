@@ -25,6 +25,8 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 });
 
+
+// Get list of users
 app.get('/users', (req, res) => {
   const sql = `SELECT userId, username, firstName, lastName FROM Users`
 
@@ -35,6 +37,7 @@ app.get('/users', (req, res) => {
   });
 });
 
+// Create a user
 app.post('/users', (req, res) => {
   const body = req.body;
   console.log(req.body);
@@ -51,6 +54,7 @@ app.post('/users', (req, res) => {
   });
 });
 
+// Get all users within a room
 app.get('/users/:userId/rooms/:roomId/usersInRoom', (req, res) => {
   const userId = req.params.userId;
   const roomId = req.params.roomId;
@@ -63,6 +67,7 @@ app.get('/users/:userId/rooms/:roomId/usersInRoom', (req, res) => {
   });
 });
 
+// Get all rooms a user belongs
 app.get('/users/:userId/rooms', (req, res) => {
   const userId = req.params.userId;
   const sql = `SELECT roomId, roomName FROM Rooms INNER JOIN UserRoom USING(roomId) WHERE userId = ${userId}`;
@@ -74,6 +79,7 @@ app.get('/users/:userId/rooms', (req, res) => {
   });
 });
 
+// User creates a room
 app.post('/users/:userId/rooms', (req, res) => {
   const userId = req.params.userId;
   const body = req.body;
@@ -108,6 +114,7 @@ app.post('/users/:userId/rooms', (req, res) => {
   });
 });
 
+// User deletes a room
 app.delete('/users/:userId/rooms/:roomId', (req, res) => {
   const userId = req.params.userId;
   const roomId = req.params.roomId;
@@ -140,6 +147,7 @@ app.delete('/users/:userId/rooms/:roomId', (req, res) => {
   });
 });
 
+// Get all markers of a room a user belongs to
 app.get('/users/:userId/rooms/:roomId/markers', (req, res) => {
   const userId = req.params.userId;
   const roomId = req.params.roomId;
@@ -157,6 +165,7 @@ app.get('/users/:userId/rooms/:roomId/markers', (req, res) => {
   });
 });
 
+// Create a marker
 app.post('/users/:userId/rooms/:roomId/marker', (req, res) => {
   const userId = req.params.userId;
   const roomId = req.params.roomId;
