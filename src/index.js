@@ -65,7 +65,7 @@ app.get('/login', (req, res) => {
   const body = req.body;
   const username = body.username;
   const userpwd = body.userPwd;
-  const sql = `SELECT password FROM Users WHERE username = '${username}'`;
+  const sql = `SELECT password, userId FROM Users WHERE username = '${username}'`;
 
   connection.query(sql, (err, results, fields) => {
     if (err) throw err;
@@ -77,13 +77,14 @@ app.get('/login', (req, res) => {
       console.log(userpwd);
       console.log(actualPwd);
       if (actualPwd == userpwd) {
-        res.status(202).end();
+        const userId = results[0].userId;
+        res.status(202).send(userId + "");
       } else {
         res.status(401).send("Wrong password!");
       }
     }
   });
-})
+});
 
 // Get all users within a room
 app.get('/users/:userId/rooms/:roomId/usersInRoom', (req, res) => {
