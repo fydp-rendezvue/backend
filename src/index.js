@@ -61,14 +61,16 @@ app.post('/users', (req, res) => {
 });
 
 // Authenticate a user
-app.get('/login', (req, res) => {
+app.post('/login', (req, res) => {
   const body = req.body;
   const username = body.username;
   const userpwd = body.userPwd;
   const sql = `SELECT password, userId FROM Users WHERE username = '${username}'`;
 
   connection.query(sql, (err, results, fields) => {
-    if (err) throw err;
+    if (err) {
+      res.status(400).send("User does not exist, please create an account!");
+    }
 
     if (results.length == 0) { 
       res.status(400).send("User does not exist, please create an account!");
